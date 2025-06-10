@@ -1,5 +1,4 @@
-from langchain_community.llms import Ollama
-from langchain_core.prompts import ChatPromptTemplate
+from utils import search_with_ollama
 
 template = (
     "You are tasked with extracting specific information from the following text content: {dom_content}. "
@@ -11,18 +10,3 @@ template = (
 )
 
 model = Ollama(model = "llama3.1")
-
-def search_with_ollama(dom_chunks, parse_description):
-    prompt = ChatPromptTemplate.from_template(template)
-    chain = prompt | model
-
-    parsed_results = []
-
-    for i, chunk in enumerate(dom_chunks, start = 1):
-        response = chain.invoke(
-            {"dom_content": chunk, "parse_description": parse_description}
-        )
-        print(f"Parsed batch {i} of {len(dom_chunks)}")
-        parsed_results.append(response)
-
-    return "\n".join(parsed_results)

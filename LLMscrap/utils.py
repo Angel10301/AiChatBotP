@@ -2,6 +2,8 @@ import selenium.webdriver as webdriver
 from selenium.webdriver.chrome.service import Service
 import time
 from bs4 import BeautifulSoup
+from langchain_community.llms import Ollama
+from langchain_core.prompts import ChatPromptTemplate
 
 def scrape_website(website):
     print("Launching chrome browser....")
@@ -9,15 +11,6 @@ def scrape_website(website):
     chrome_driver_path = "./chromedriver.exe"
     options = webdriver.ChromeOptions()
     driver = webdriver.Chrome(service = Service(chrome_driver_path), options=options)
-
-    try:
-        driver.get(website)
-        print("Page loaded....")
-        html = driver.page_source
-
-        return html
-    finally:
-        driver.quit()
 
 def extract_body_content(html_content):
     soup = BeautifulSoup(html_content, "html.parser")
@@ -42,3 +35,18 @@ def split_dom_content(dom_content, max_length = 6000):
     return [
         dom_content [i : i + max_length] for i in range(0, len(dom_content), max_length)
     ]
+
+def search_with_ollama(dom_chunks, parse_description):
+    prompt = ChatPromptTemplate.from_template(template)
+    chain = prompt | model
+
+    parsed_results = []
+
+    for i, chunk in enumerate(dom_chunks, start = 1):
+        response = chain.invoke(
+            {"dom_content": chunk, "parse_description": parse_description}
+        )
+        print(f"Parsed batch {i} of {len(dom_chunks)}")
+        parsed_results.append(response)
+
+    return "\n".join(parsed_results)

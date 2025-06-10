@@ -1,6 +1,5 @@
 import streamlit as st
-from scrape import scrape_website, split_dom_content, clean_body_content, extract_body_content
-from search import search_with_ollama
+from utils import scrape_website, split_dom_content, clean_body_content, extract_body_content, search_with_ollama
 
 st.title("Web Scrap")
 url = st.text_input("Enter an url: ")
@@ -21,7 +20,7 @@ if "dom_content" in st.session_state:
 
     if st.button("Search Content"):
         if parse_description:
-            st.write("Searching....")
+            st.write("Searched Results:")
             
             dom_chunks = split_dom_content(st.session_state.dom_content)
             result = search_with_ollama(dom_chunks, parse_description)
