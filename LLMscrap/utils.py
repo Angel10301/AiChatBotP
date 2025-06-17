@@ -9,14 +9,15 @@ from langchain_core.prompts import ChatPromptTemplate
 # This file centralizes logic used by both the Streamlit UI and FastAPI backend.
 # Date: June 10,2025
 
-# Template for LLM prompt, defining extraction rules for search_with_ollama function.
+# Template for LLM prompt, defining extraction rules for the search_with_ollama function.
 template = (
     "You are tasked with extracting specific information from the following text content: {dom_content}. "
-    "Please follow these instructions carefully: \n\n"
-    "1. **Extract Information:** Only extract the information that directly matches the provided description: {parse_description}. "
-    "2. **No Extra Content:** Do not include any additional text, comments, or explanations in your response. "
-    "3. **Empty Response:** If no information matches the description, return an empty string ('')."
-    "4. **Direct Data Only:** Your output should contain only the data that is explicitly requested, with no other text."
+    "Follow these strict instructions: \n\n"
+    "1. **Extract Only Matches:** Extract only the information that exactly matches the description: {parse_description}. "
+    "2. **No Extra Text:** Do not include any additional text, explanations, or comments. "
+    "3. **Empty String on No Match:** If no information matches the description, return an empty string (''). "
+    "4. **Format Output:** Return the result as a comma-separated list if multiple items are found, or a single value if one item is found. "
+    "5. **Ignore HTML Noise:** Focus only on meaningful text, ignoring HTML tags or irrelevant data."
 )
 # Instantiate the Ollama language model with the llama3.1 model for parsing tasks (may be updated with a new model),
 # Must ensure Ollama server is running (ollama serve) and model is pulled (ollama pull llama3.1)
@@ -27,7 +28,7 @@ def scrape_website(website):
     Args:
         website (str): The url to scrape.
 
-    Returns:
+    Returns:SS
         str: The page source HTML, or empty if scraping fails.
 
     Note:
@@ -39,7 +40,7 @@ def scrape_website(website):
     driver = webdriver.Chrome(service = Service(chrome_driver_path), options=options)
     try:
         driver.get(website)
-        print("Page loaded....")
+        time.sleep(5)
         html = driver.page_source
         return html
     finally:
